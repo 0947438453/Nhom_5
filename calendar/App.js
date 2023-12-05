@@ -47,7 +47,6 @@ export default class App extends Component {
       isModalVisible: false,
       isAllEventsModalVisible: false,
       editNoteIndex: null,
-      searchQuery: '',
     };
 
     this.onDateChange = this.onDateChange.bind(this);
@@ -60,21 +59,8 @@ export default class App extends Component {
     this.onMonthChange = this.onMonthChange.bind(this);
     this.openAllEventsModal = this.openAllEventsModal.bind(this);
     this.closeAllEventsModal = this.closeAllEventsModal.bind(this);
-    this.onSearchQueryChange = this.onSearchQueryChange.bind(this); // Add this line
   }
 
-  onSearchQueryChange(text) {
-    this.setState({
-      searchQuery: text,
-    });
-  }
-
-  openAllEventsModal() {
-    this.setState({
-      isAllEventsModalVisible: true,
-      searchQuery: '', // Reset the search query
-    });
-  }
   onMonthChange(month) {
     console.log('Selected month:', month.month, 'Selected year:', month.year);
     this.setState({});
@@ -164,6 +150,13 @@ export default class App extends Component {
       note: '',
     });
   }
+
+  openAllEventsModal() {
+    this.setState({
+      isAllEventsModalVisible: true,
+    });
+  }
+
   closeAllEventsModal() {
     this.setState({
       isAllEventsModalVisible: false,
@@ -253,31 +246,24 @@ export default class App extends Component {
         >
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Tất cả sự kiện</Text>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Tìm kiếm sự kiện..."
-              onChangeText={text => this.onSearchQueryChange(text)}
-              value={this.state.searchQuery}
-            />
             {Object.entries(dailyNotes).map(([date, events]) => (
               <View key={date}>
                 <Text style={styles.dateTitle}>{date}</Text>
-                {events
-                  .filter(event => event.includes(this.state.searchQuery))
-                  .map((event, index) => (
-                    <Text key={index} style={styles.eventText}>
-                      {event}
-                    </Text>
-                  ))}
+                {events.map((event, index) => (
+                  <Text key={index} style={styles.eventText}>
+                    {event}
+                  </Text>
+                ))}
               </View>
             ))}
             <Button title="Đóng" onPress={this.closeAllEventsModal} />
           </View>
         </Modal>
-        </View>
-        );
-      }
-    }
+      </View>
+    );
+  }
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -337,12 +323,5 @@ const styles = StyleSheet.create({
   },
   eventText: {
     marginBottom: 5,
-  },
-   searchInput: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 10,
-    paddingLeft: 8,
   },
 });
